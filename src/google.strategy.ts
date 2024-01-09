@@ -1,7 +1,9 @@
 import { PassportStrategy } from '@nestjs/passport';
+import * as pass from 'generate-password';
 import { Strategy, VerifyCallback } from 'passport-google-oauth20';
 import { config } from 'dotenv';
 import { AuthService } from '~/auth/auth.service';
+import { UsersService } from '~/users/users.service';
 
 import { Injectable } from '@nestjs/common';
 
@@ -9,7 +11,10 @@ config();
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
-  constructor(private authService: AuthService) {
+  constructor(
+    private authService: AuthService,
+    private userService: UsersService,
+  ) {
     super({
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_SECRET,
@@ -24,15 +29,29 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     profile: any,
     done: VerifyCallback,
   ): Promise<any> {
-    const { name, emails, photos } = profile;
-    const user = {
+    const { name, emails } = profile;
+    const userGoogle = {
       email: emails[0].value,
       firstName: name.givenName,
       lastName: name.familyName,
-      picture: photos[0].value,
-      accessToken,
     };
-    const jwt_token = await this.authService.signIn(user.email, '', true);
+    const user = await this.userService.findOne({ email: userGoogle.email });
+    if (!user) {
+      const password = pass.generate({
+        length: 10,
+        numbers: true,
+        symbols: true,
+      });
+      const newUser = {
+        name: userGoogle.firstName + ' ' + userGoogle.lastName,
+        email: userGoogle.email,
+        password,
+        password_confirm: password,
+        isEmailVerified: true,
+      };
+      await this.userService.create(newUser, true);
+    }
+    const jwt_token = await this.authService.signIn(userGoogle.email, '', true);
 
     done(null, jwt_token);
   }

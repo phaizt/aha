@@ -13,4 +13,10 @@ export class User {
 
   @Column({ length: 255 })
   email: string;
+
+  @Column('boolean', { default: false })
+  isEmailVerified: boolean;
+
+  @Column({ length: 255 })
+  activateToken: string;
 }

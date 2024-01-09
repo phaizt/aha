@@ -1,4 +1,11 @@
-import { IsEmail, IsNotEmpty, Matches, MinLength } from 'class-validator';
+import {
+  IsBoolean,
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  Matches,
+  MinLength,
+} from 'class-validator';
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -23,4 +30,12 @@ export class CreateUserDto {
   })
   @MinLength(8)
   password_confirm: string;
+
+  @IsOptional()
+  @IsBoolean()
+  isEmailVerified?: boolean;
+
+  @MinLength(100)
+  @IsOptional()
+  activateToken?: string;
 }

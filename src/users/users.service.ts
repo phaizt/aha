@@ -1,4 +1,5 @@
 import * as bcrypt from 'bcrypt';
+import * as pass from 'generate-password';
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -11,7 +12,7 @@ export class UsersService {
   private logger = new Logger(UsersService.name);
   constructor(private readonly userRepository: UserRepository) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto, isOauth?: boolean): Promise<User> {
     const { password, password_confirm } = createUserDto;
     if (password !== password_confirm) {
       throw new HttpException(
@@ -26,8 +27,21 @@ export class UsersService {
     try {
       const saltOrRounds = 10;
       const hash = await bcrypt.hash(password, saltOrRounds);
+      const activateToken =
+        pass.generate({
+          length: 80,
+          numbers: true,
+        }) + Date.now();
 
-      return this.userRepository.store({ ...createUserDto, password: hash });
+      const data = await this.userRepository.store({
+        ...createUserDto,
+        password: hash,
+        activateToken,
+      });
+      if (!isOauth) {
+        // send email
+      }
+      return data;
     } catch (error) {
       this.logger.log(`UsersService:create: ${JSON.stringify(error.message)}`);
       throw new Error(error.message);
