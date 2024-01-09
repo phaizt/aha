@@ -36,7 +36,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       lastName: name.familyName,
     };
     const user = await this.userService.findOne({ email: userGoogle.email });
-    if (!user) {
+    if (!user.data) {
       const password = pass.generate({
         length: 10,
         numbers: true,
