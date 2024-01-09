@@ -4,11 +4,12 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { UserRepository } from './repositories/user.repository';
+import { FindOptionsWhere } from 'typeorm';
 
 @Injectable()
 export class UsersService {
   private logger = new Logger(UsersService.name);
-  constructor(private readonly userRepository: UserRepository) { }
+  constructor(private readonly userRepository: UserRepository) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const { password, password_confirm } = createUserDto;
@@ -34,11 +35,15 @@ export class UsersService {
   }
 
   findAll() {
-    return `This action returns all users`;
+    return this.userRepository.findAll();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  findById(id: number) {
+    return this.userRepository.findById(id);
+  }
+
+  findOne(query: FindOptionsWhere<User>) {
+    return this.userRepository.findOneBy(query);
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

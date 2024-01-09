@@ -1,0 +1,47 @@
+{
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+  },
+  "azdoPullRequests.orgUrl": "https://dev.azure.com/lapasar",
+  "azdoPullRequests.projectName": "Lapasar Wholesale V4",
+  "files.eol": "\n",
+  "files.exclude": {
+    "**/.DS_Store": true,
+    "**/.trunk": true,
+    "**/Thumbs.db": true,
+    "**/node_modules": true
+  },
+  "cSpell.words": [
+    "Alam",
+    "bson",
+    "cellspacing",
+    "Darul",
+    "domcontentloaded",
+    "dont",
+    "Ehsan",
+    "imei",
+    "InTansitAttemptFailed",
+    "InTansitInbound",
+    "InTansitOutbound",
+    "InTansitOutForDelivery",
+    "interwarehouse",
+    "Kuala",
+    "Lumpur",
+    "nats",
+    "networkidle",
+    "promocode",
+    "qrcode",
+    "tenderin",
+    "InTansitOutbound",
+    "InTansitInbound",
+    "InTansitOutForDelivery",
+    "InTansitAttemptFailed",
+    "interwarehouse",
+    "bson",
+    "qrcode"
+  ]
+}
