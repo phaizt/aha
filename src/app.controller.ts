@@ -1,4 +1,4 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Redirect, Req, Res, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
 import { AuthGuard } from '@nestjs/passport';
 import { Public } from './auth/auth.decorator';
@@ -20,7 +20,11 @@ export class AppController {
   @Public()
   @Get('redirect')
   @UseGuards(AuthGuard('google'))
-  googleAuthRedirect(@Req() req) {
-    return this.appService.googleLogin(req);
+  googleAuthRedirect(@Req() req, @Res() res) {
+    const google = this.appService.googleLogin(req) as any;
+    return res.redirect(
+      `${process.env.FE_URL}/pages/login?access_token=` +
+        google?.user?.access_token,
+    );
   }
 }

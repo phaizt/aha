@@ -18,7 +18,7 @@ export class AuthService {
 
   async signIn(email, pass, isOauth?: boolean) {
     const user = await this.usersService.findOne({ email });
-    if (!user) {
+    if (!user?.data) {
       throw new HttpException(
         {
           message: ['Email not exists, please register first'],
@@ -29,12 +29,12 @@ export class AuthService {
       );
     }
     if (!isOauth) {
-      const isMatch = await bcrypt.compare(pass, user?.password);
+      const isMatch = await bcrypt.compare(pass, user?.data.password);
       if (!isMatch) {
         throw new UnauthorizedException();
       }
     }
-    const payload = { userId: user.id, email: user.email };
+    const payload = { id: user.data.id, email: user.data.email };
     return {
       access_token: await this.jwtService.signAsync(payload, {
         secret: jwtConstants.secret,

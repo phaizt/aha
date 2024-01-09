@@ -15,8 +15,11 @@ export class User {
   email: string;
 
   @Column('boolean', { default: false })
-  isEmailVerified: boolean;
+  is_email_verified: boolean;
 
   @Column({ length: 255 })
-  activateToken: string;
+  activate_token: string;
+
+  @Column({ length: 255, nullable: true, default: null })
+  reset_password_token?: string;
 }

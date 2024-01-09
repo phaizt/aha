@@ -18,7 +18,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     super({
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_SECRET,
-      callbackURL: 'http://localhost:3000/google/redirect',
+      callbackURL: 'http://localhost:4000/google/redirect',
       scope: ['email', 'profile'],
     });
   }
@@ -47,7 +47,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         email: userGoogle.email,
         password,
         password_confirm: password,
-        isEmailVerified: true,
+        is_email_verified: true,
       };
       await this.userService.create(newUser, true);
     }

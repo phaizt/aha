@@ -24,18 +24,18 @@ export class CreateUserDto {
   password: string;
 
   @IsNotEmpty()
-  @Matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/, {
-    message:
-      'password must contains at least one lower character, one upper character, one digit character, one special character, minimum 8 characters',
-  })
   @MinLength(8)
   password_confirm: string;
 
   @IsOptional()
   @IsBoolean()
-  isEmailVerified?: boolean;
+  is_email_verified?: boolean;
 
   @MinLength(100)
   @IsOptional()
-  activateToken?: string;
+  activate_token?: string;
+
+  @MinLength(100)
+  @IsOptional()
+  reset_password_token?: string;
 }

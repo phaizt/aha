@@ -6,6 +6,7 @@ import { UsersModule } from './users/users.module';
 import { GoogleStrategy } from './google.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
@@ -18,6 +19,20 @@ import { AuthModule } from './auth/auth.module';
       password: process.env.DATABASE_PASS,
       database: process.env.DATABASE_NAME,
       autoLoadEntities: true,
+    }),
+    MailerModule.forRoot({
+      transport: {
+        host: process.env.MAIL_HOST,
+        port: Number(process.env.MAIL_PORT),
+        secure: false,
+        auth: {
+          user: process.env.MAIL_USER,
+          pass: process.env.MAIL_PASS,
+        },
+      },
+      defaults: {
+        from: process.env.MAIL_FROM,
+      },
     }),
     UsersModule,
     AuthModule,
