@@ -19,6 +19,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
       password: process.env.DATABASE_PASS,
       database: process.env.DATABASE_NAME,
       autoLoadEntities: true,
+      synchronize: true,
     }),
     MailerModule.forRoot({
       transport: {

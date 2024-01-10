@@ -1,4 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User {
@@ -8,6 +9,7 @@ export class User {
   @Column({ length: 255 })
   name: string;
 
+  @Exclude()
   @Column({ length: 255 })
   password: string;
 
@@ -22,4 +24,13 @@ export class User {
 
   @Column({ length: 255, nullable: true, default: null })
   reset_password_token?: string;
+
+  @Column({ nullable: true, default: 0 })
+  number_of_login?: number;
+
+  @Column({ type: 'timestamp', default: null })
+  created_at?: Date;
+
+  @Column({ type: 'timestamp', default: null })
+  last_login_at?: Date;
 }

@@ -34,6 +34,11 @@ export class AuthService {
         throw new UnauthorizedException();
       }
     }
+    const updateLogin = {
+      number_of_login: user.data.number_of_login + 1,
+      last_login_at: new Date(),
+    };
+    await this.usersService.update(user.data.id, updateLogin);
     const payload = { id: user.data.id, email: user.data.email };
     return {
       access_token: await this.jwtService.signAsync(payload, {

@@ -4,7 +4,7 @@
     "source.fixAll.eslint": "explicit"
   },
   "[typescript]": {
-    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
   },
   "azdoPullRequests.orgUrl": "https://dev.azure.com/lapasar",
   "azdoPullRequests.projectName": "Lapasar Wholesale V4",

@@ -1,5 +1,6 @@
 import {
   IsBoolean,
+  IsDate,
   IsEmail,
   IsNotEmpty,
   IsOptional,
@@ -38,4 +39,15 @@ export class CreateUserDto {
   @MinLength(100)
   @IsOptional()
   reset_password_token?: string;
+
+  @IsOptional()
+  number_of_login?: number;
+
+  @IsOptional()
+  @IsDate()
+  last_login_at?: Date;
+
+  @IsOptional()
+  @IsDate()
+  created_at?: Date;
 }

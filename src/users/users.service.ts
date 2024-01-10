@@ -1,5 +1,8 @@
 import * as bcrypt from 'bcrypt';
 import * as pass from 'generate-password';
+import { Between } from 'typeorm';
+import { endOfDay, startOfDay, subDays } from 'date-fns';
+import { formatInTimeZone, toDate } from 'date-fns-tz';
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -42,6 +45,7 @@ export class UsersService {
         ...createUserDto,
         password: hash,
         activate_token,
+        created_at: new Date(),
       });
       if (!isOauth) {
         // send email
@@ -59,8 +63,9 @@ export class UsersService {
     }
   }
 
-  findAll() {
-    return this.userRepository.findAll();
+  async findAll() {
+    const data = await this.userRepository.findAll();
+    return { data, statusCode: HttpStatus.OK };
   }
 
   async findById(id: number) {
@@ -116,6 +121,35 @@ export class UsersService {
       this.logger.log(`UsersService:create: ${JSON.stringify(error.message)}`);
       throw new Error(error.message);
     }
+  }
+
+  async usersStats() {
+    const tz = 'Asia/Jakarta';
+    const startDateTz = toDate(
+      formatInTimeZone(startOfDay(new Date()), tz, 'yyyy-MM-dd HH:mm:ss'),
+    );
+    const endDateTz = toDate(
+      formatInTimeZone(endOfDay(new Date()), tz, 'yyyy-MM-dd HH:mm:ss'),
+    );
+    const weekAgo = subDays(new Date(), 7);
+    const weekAgoTz = toDate(
+      formatInTimeZone(startOfDay(weekAgo), tz, 'yyyy-MM-dd HH:mm:ss'),
+    );
+
+    const [totalRegister, activeToday, activeWeek] = await Promise.all([
+      await this.userRepository.count(),
+      await this.userRepository.countBy({
+        last_login_at: Between(startDateTz, endDateTz),
+      }),
+      await this.userRepository.countBy({
+        last_login_at: Between(weekAgoTz, endDateTz),
+      }),
+    ]);
+
+    const avgWeek = (activeWeek / 7).toFixed(2);
+
+    const data = { totalRegister, activeToday, avgWeek };
+    return { data, statusCode: HttpStatus.OK };
   }
 
   async activateEmail(token: string) {

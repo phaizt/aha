@@ -41,6 +41,11 @@ export class UsersController {
     return this.usersService.findById(+(request.user as User).id);
   }
 
+  @Get('/stats')
+  userStats() {
+    return this.usersService.usersStats();
+  }
+
   @Get(':id')
   findById(@Param('id') id: string) {
     return this.usersService.findById(+id);
