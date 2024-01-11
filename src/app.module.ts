@@ -14,12 +14,11 @@ import { MailerModule } from '@nestjs-modules/mailer';
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DATABASE_HOST,
-      port: process.env.DATABASE_PORT ? +process.env.DATABASE_HOST : 3306,
+      port: process.env.DATABASE_PORT ? +process.env.DATABASE_PORT : 3306,
       username: process.env.DATABASE_USER,
       password: process.env.DATABASE_PASS,
       database: process.env.DATABASE_NAME,
       autoLoadEntities: true,
-      synchronize: true,
     }),
     MailerModule.forRoot({
       transport: {
