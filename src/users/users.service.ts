@@ -68,7 +68,7 @@ export class UsersService {
     return { data, statusCode: HttpStatus.OK };
   }
 
-  async findById(id: number) {
+  async findById(id: string) {
     const data = await this.userRepository.findById(id);
     return { data, statusCode: HttpStatus.OK };
   }
@@ -78,12 +78,12 @@ export class UsersService {
     return { data, statusCode: HttpStatus.OK };
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: string, updateUserDto: UpdateUserDto) {
     const data = await this.userRepository.updateOne(id, updateUserDto);
     return { data, statusCode: HttpStatus.OK };
   }
 
-  async updatePassword(id: number, updatePasswordDto: UpdatePasswordDto) {
+  async updatePassword(id: string, updatePasswordDto: UpdatePasswordDto) {
     const user = await this.userRepository.findById(id);
     const { password, password_confirm, old_password } = updatePasswordDto;
 
@@ -163,7 +163,7 @@ export class UsersService {
     };
   }
 
-  async resendEmailActivation(id: number) {
+  async resendEmailActivation(id: string) {
     const data = await this.userRepository.findById(id);
     const activate_link = `${process.env.BASE_URL}/users/activate/${data.activate_token}`;
     this.mailerService.sendMail({
@@ -177,7 +177,7 @@ export class UsersService {
     };
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return `This action removes a #${id} user`;
   }
 }

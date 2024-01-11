@@ -6,6 +6,10 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @PrimaryGeneratedColumn('uuid')
+  @Column('varchar')
+  uuid: string;
+
   @Column({ length: 255 })
   name: string;
 

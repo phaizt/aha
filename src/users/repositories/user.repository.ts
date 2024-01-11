@@ -20,8 +20,8 @@ export class UserRepository extends Repository<User> {
     return this.find();
   }
 
-  public async findById(id: number): Promise<User | null> {
-    return this.findOneBy({ id: id });
+  public async findById(id: string): Promise<User | null> {
+    return this.findOneBy({ uuid: id });
   }
 
   public async store(user: CreateUserDto): Promise<User> {
@@ -30,7 +30,7 @@ export class UserRepository extends Repository<User> {
   }
 
   public async updateOne(
-    id: number,
+    id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<User | undefined> {
     const user = await this.findById(id);
@@ -39,7 +39,8 @@ export class UserRepository extends Repository<User> {
     return this.save(user);
   }
 
-  public async destroy(id: number): Promise<void> {
-    await this.delete(id);
+  public async destroy(id: string): Promise<void> {
+    const user = await this.findById(id);
+    await this.delete(user.id);
   }
 }
