@@ -39,7 +39,11 @@ export class AuthService {
       last_login_at: new Date(),
     };
     await this.usersService.update(user.data.uuid, updateLogin);
-    const payload = { id: user.data.uuid, email: user.data.email };
+    const payload = {
+      id: user.data.id,
+      uuid: user.data.uuid,
+      email: user.data.email,
+    };
     return {
       access_token: await this.jwtService.signAsync(payload, {
         secret: jwtConstants.secret,
