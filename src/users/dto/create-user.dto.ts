@@ -50,4 +50,10 @@ export class CreateUserDto {
   @IsOptional()
   @IsDate()
   created_at?: Date;
+
+  @IsOptional()
+  is_oauth?: boolean;
+
+  @IsOptional()
+  is_password_changed?: boolean;
 }

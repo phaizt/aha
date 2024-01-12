@@ -23,6 +23,12 @@ export class User {
   @Column('boolean', { default: false })
   is_email_verified: boolean;
 
+  @Column('boolean', { default: false })
+  is_oauth: boolean;
+
+  @Column('boolean', { default: false })
+  is_password_changed: boolean;
+
   @Column({ length: 255 })
   activate_token: string;
 

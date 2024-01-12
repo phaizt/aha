@@ -48,6 +48,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         password,
         password_confirm: password,
         is_email_verified: true,
+        is_oauth: true,
       };
       await this.userService.create(newUser, true);
     }

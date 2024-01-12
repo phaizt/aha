@@ -87,22 +87,31 @@ export class UsersService {
     const user = await this.userRepository.findById(id);
     const { password, password_confirm, old_password } = updatePasswordDto;
 
+    const skipCheckOauth = user.is_oauth && !user.is_password_changed;
+
+    const errorMessage: string[] = [];
+
     if (password !== password_confirm) {
-      throw new HttpException(
-        {
-          message: ['Password Confirm must be the same as password'],
-          error: 'Bad Request ',
-          statusCode: HttpStatus.BAD_REQUEST,
-        },
-        HttpStatus.BAD_REQUEST,
-      );
+      errorMessage.push('Password Confirm must be the same as password');
     }
 
-    const isMatch = await bcrypt.compare(old_password, user.password);
-    if (!isMatch) {
+    if (!skipCheckOauth) {
+      if (password === old_password) {
+        errorMessage.push(
+          'New password must be different with the old password',
+        );
+      }
+
+      const isMatch = await bcrypt.compare(old_password, user.password);
+      if (!isMatch) {
+        errorMessage.push('Old Password is not match');
+      }
+    }
+
+    if (errorMessage.length) {
       throw new HttpException(
         {
-          message: ['Old Password is not match'],
+          message: errorMessage,
           error: 'Bad Request ',
           statusCode: HttpStatus.BAD_REQUEST,
         },
@@ -115,6 +124,7 @@ export class UsersService {
       const hash = await bcrypt.hash(password, saltOrRounds);
       const data = await this.userRepository.updateOne(id, {
         password: hash,
+        is_password_changed: true,
       });
       return { data, statusCode: HttpStatus.OK };
     } catch (error) {
