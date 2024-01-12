@@ -9,16 +9,15 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { UserRepository } from './repositories/user.repository';
 import { FindOptionsWhere } from 'typeorm';
-import { MailerService } from '@nestjs-modules/mailer';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-import { Client, SendEmailV3_1, LibraryResponse } from 'node-mailjet';
+import { MailService } from '~/mail/mail.service';
 
 @Injectable()
 export class UsersService {
   private logger = new Logger(UsersService.name);
   constructor(
     private readonly userRepository: UserRepository,
-    private readonly mailerService: MailerService,
+    private readonly mailService: MailService,
   ) {}
 
   async create(createUserDto: CreateUserDto, isOauth?: boolean) {
@@ -51,7 +50,7 @@ export class UsersService {
       if (!isOauth) {
         // send email
         const activate_link = `${process.env.BASE_URL}/users/activate/${data.activate_token}`;
-        this.mailerService.sendMail({
+        this.mailService.sendMail({
           to: data.email,
           subject: 'Activate your account',
           html: `<b>welcome</b> <p>Please activate your account in <a href="${activate_link}">here</a>, or copy paste this link to your browser ${activate_link}</p>`,
@@ -177,39 +176,13 @@ export class UsersService {
   async resendEmailActivation(id: string) {
     const data = await this.userRepository.findById(id);
     const activate_link = `${process.env.BASE_URL}/users/activate/${data.activate_token}`;
-    const mailjet = new Client({
-      apiKey: process.env.MAIL_USER,
-      apiSecret: process.env.MAIL_PASS,
+    this.mailService.sendMail({
+      to: data.email,
+      subject: 'Activate your account',
+      html: `<b>welcome</b> <p>Please activate your account in <a href="${activate_link}">here</a>, or copy paste this link to your browser ${activate_link}</p>`,
     });
-    const body: SendEmailV3_1.Body = {
-      Messages: [
-        {
-          From: {
-            Email: process.env.MAIL_FROM,
-          },
-          To: [
-            {
-              Email: data.email,
-            },
-          ],
-          Subject: 'Activate your account!!',
-          HTMLPart: `<b>welcome</b> <p>Please activate your account in <a href="${activate_link}">here</a>, or copy paste this link to your browser ${activate_link}</p>`,
-        },
-      ],
-    };
-
-    const result: LibraryResponse<SendEmailV3_1.Response> = await mailjet
-      .post('send', { version: 'v3.1' })
-      .request(body);
-
-    const { Status } = result.body.Messages[0];
-    // this.mailerService.sendMail({
-    //   to: data.email,
-    //   subject: 'Activate your account',
-    //   html: `<b>welcome</b> <p>Please activate your account in <a href="${activate_link}">here</a>, or copy paste this link to your browser ${activate_link}</p>`,
-    // });
     return {
-      message: [`Email has been sent ${Status}`, ...result.body.Messages],
+      message: [`Email has been sent`],
       statusCode: HttpStatus.OK,
     };
   }
